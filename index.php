@@ -3,7 +3,7 @@
  * Plugin Name: Fines Manager
  * Plugin URI: https://github.com/erwansetyobudi/fines_manager
  * Description: To view, edit and delete fines
- * Version: 0.0.1
+ * Version: 0.0.2
  * Author: Erwan Setyo Budi
  * Author URI: https://github.com/erwansetyobudi
  */
@@ -38,9 +38,16 @@ if (isset($_POST['saveData'])) {
     $memberID = trim($_POST['memberID']);
     $debet = (int)trim($_POST['debet']);
     $credit = (int)trim($_POST['credit']);
-    $kodeEksemplar = trim($_POST['kodeEksemplar']);
-    $description = 'Overdue fines for item ' . $kodeEksemplar;
-
+    
+    // Handle description based on mode (new vs update)
+    if (isset($_POST['updateRecordID'])) {
+        // Edit mode: use description from form
+        $description = trim($_POST['description'] ?? '');
+    } else {
+        // New record mode: use kodeEksemplar to build description
+        $kodeEksemplar = trim($_POST['kodeEksemplar'] ?? '');
+        $description = 'Overdue fines for item ' . $kodeEksemplar;
+    }
     
     if (empty($finesDate) OR empty($memberID)) {
         toastr('Tanggal dan ID Anggota tidak boleh kosong')->error();
@@ -213,6 +220,8 @@ if (isset($_POST['detail']) OR (isset($_GET['action']) AND $_GET['action'] == 'd
     } else {
         // EDIT denda: tampilkan Keterangan seperti biasa
         $form->addTextField('textarea', 'description', 'Keterangan', $rec_d['description']??'', 'class="form-control" style="width: 100%;" rows="3"');
+        // Tambahkan hidden field untuk kodeEksemplar agar tidak menyebabkan error
+        $form->addHidden('kodeEksemplar', '');
     }
 
 
@@ -281,3 +290,4 @@ if (isset($_POST['detail']) OR (isset($_GET['action']) AND $_GET['action'] == 'd
     echo $datagrid_result;
 }
 /* main content end */
+?>
