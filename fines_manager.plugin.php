@@ -13,3 +13,4 @@ $plugin = \SLiMS\Plugins::getInstance();
 
 // registering menus
 $plugin->registerMenu('circulation', 'Fines Manager', __DIR__ . '/index.php');
+$plugin->registerMenu('circulation', 'Edit Sirkulasi', __DIR__ . '/circulation-editor.php');
